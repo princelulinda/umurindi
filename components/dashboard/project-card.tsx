@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface ProjectCardProps {
   title: string
@@ -42,9 +43,11 @@ export function ProjectCard({ title, description, amount, progress, category, im
             <Progress value={progress} className="h-1.5" />
             <div className="flex justify-between items-center text-xs">
               <span className="text-muted-foreground">{progress}% atteint</span>
-              <Button variant="outline" size="sm" className="h-8">
-                Investir
-              </Button>
+              <Link href={`/projects/1`}>
+                <Button variant="outline" size="sm" className="h-8">
+                  Investir
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

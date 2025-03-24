@@ -4,6 +4,7 @@ import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import SidebarComponent from "@/components/sidebar";
 import Navbar from "@/components/navbar";
+import NextTopLoader from 'nextjs-toploader';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <SidebarProvider>
+        <NextTopLoader
+  color="#00a455"
+  initialPosition={0.08}
+  crawlSpeed={200}
+  height={3}
+  crawl={true}
+  showSpinner={true}
+  easing="ease"
+  speed={200}
+  shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+/>
             <div className="flex h-full">
               <SidebarComponent />
               <div className="flex-1 md:ml-[5%] flex flex-col">

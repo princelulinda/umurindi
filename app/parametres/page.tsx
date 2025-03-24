@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Settings, User, Bell, Moon, Sun, Globe } from 'lucide-react'
+import { Settings, User, Bell, Sun, Globe } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function ParametresPage() {

@@ -2,6 +2,8 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Percent, CalendarDays, AlertCircle } from "lucide-react"
+import Link from "next/link"
+import { id } from "date-fns/locale"
 
 interface CreditCardProps {
   id: number
@@ -84,7 +86,9 @@ export function CreditCard({
         </div>
       </CardContent>
       <CardFooter className="mt-auto pt-6">
-        <Button className="w-full">Faire une demande</Button>
+        <Link href={`/credit/1`}>
+        <Button className="w-full">investir dans ce credit</Button>
+        </Link>
       </CardFooter>
     </Card>
   )
