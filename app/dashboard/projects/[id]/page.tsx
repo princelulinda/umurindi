@@ -66,7 +66,7 @@ const projectData = {
   ]
 }
 
-export default function ProjectDetails({ params }: { params: { id: string } }) {
+export default function ProjectDetails() {
   return (
     <div className="space-y-8 p-8 flex-1">
       {/* En-tête */}

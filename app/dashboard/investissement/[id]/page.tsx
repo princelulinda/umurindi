@@ -38,7 +38,7 @@ const investment = {
   ]
 }
 
-export default function InvestmentDetails({ params }: { params: { id: string } }) {
+export default function InvestmentDetails() {
   return (
     <div className="flex-1 h-full bg-background">
       <div className="h-full p-8 pt-6 space-y-8 overflow-auto  lg:w-[130vh]">
