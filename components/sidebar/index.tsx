@@ -8,6 +8,8 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Image from 'next/image'
+import { useEffect } from 'react'
+import useAuthStore from '@/stores/authStore'
 
 interface MenuItem {
   icon: any
@@ -26,30 +28,37 @@ const menuSections: MenuSection[] = [
     title: 'Principal',
     items: [
       { icon: Home, label: 'Accueil', href: '/' },
-      { icon: LayoutDashboard, label: 'Credit', href: '/credit', badge: '10' },
-      { icon: FolderOpenDot, label: 'Projets', href: '/projects', badge: '5' },
+      { icon: LayoutDashboard, label: 'Credit', href: '/dashboard/credit', badge: '10' },
+      { icon: FolderOpenDot, label: 'Projets', href: '/dashboard/projects', badge: '5' },
     ]
   },
   {
     title: 'Gestion',
     items: [
-      { icon: Users, label: 'Investissement', href: '/investissement' },
-      { icon: ShoppingCart, label: 'Mes Credit', href: '/products' },
-      { icon: FileText, label: 'Historique', href: '/historique', badge: '5' },
+      { icon: Users, label: 'Investissement', href: '/dashboard/investissement' },
+      { icon: ShoppingCart, label: 'Mes Credit', href: '/dashboard/products' },
+      { icon: FileText, label: 'Historique', href: '/dashboard/historique', badge: '5' },
     ]
   },
   {
     title: 'Configuration',
     items: [
-      { icon: Settings, label: 'Paramètres', href: '/settings' },
-      { icon: Shield, label: 'Sécurité', href: '/security' },
-      { icon: HelpCircle, label: 'Aide', href: '/help' },
+      { icon: Settings, label: 'Paramètres', href: '/dashboard/settings' },
+      { icon: Shield, label: 'Sécurité', href: '/dashboard/security' },
+      { icon: HelpCircle, label: 'Aide', href: '/dashboard/help' },
     ]
   },
 ]
 
 export default function SidebarComponent() {
   const pathname = usePathname()
+
+  const { user, isAuthenticated, isLoading, loadUser, logout } = useAuthStore();
+
+    useEffect(() => {
+        loadUser();
+    }, []);
+    
 
   return (
     <Sidebar className="hidden border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:flex w-[18%]">
