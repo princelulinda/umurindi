@@ -66,11 +66,13 @@ export default function Home() {
                 Rejoignez notre coopérative et faites fructifier votre capital tout en soutenant des projets innovants et durables.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link href="/auth/register">
                 <Button className="bg-[#00a455] hover:bg-[#008a48] text-white px-8 py-6 text-lg font-medium shadow-lg transition-all hover:shadow-xl">
                   Commencer maintenant
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg font-medium">
+                </Link>
+                <Button variant="outline" className="border-white text-gray-400 hover:bg-white/10 hover:text-gray-300 px-8 py-6 text-lg font-medium">
                   En savoir plus
                 </Button>
               </div>
@@ -259,7 +261,7 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-12">
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#1e2a36] px-8 py-6 text-lg">
+            <Button variant="outline" className="border-white text-gray-400 hover:text-gray-500 hover:bg-white hover:text-[#1e2a36] px-8 py-6 text-lg">
               Voir plus de témoignages
             </Button>
           </div>
@@ -357,7 +359,7 @@ export default function Home() {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg font-medium">
+              <Button variant="outline" className="border-white  text-gray-500 hover:bg-white/10 px-8 py-6 text-lg font-medium">
                 Nous contacter
               </Button>
             </Link>
@@ -423,9 +425,9 @@ export default function Home() {
               <h3 className="font-bold text-lg mb-6">Contact</h3>
               <address className="not-italic text-gray-400 space-y-3">
                 <p>123 Rue de la Coopération</p>
-                <p>75000 Paris, France</p>
+                <p>75000 Bujumbura, Burundi</p>
                 <p>contact@umurindi.com</p>
-                <p>+33 1 23 45 67 89</p>
+                <p>+25769116860</p>
               </address>
             </div>
           </div>
@@ -436,13 +438,13 @@ export default function Home() {
             <div className="flex items-center space-x-6">
               <Image 
                 src="/fdic-logo.svg" 
-                alt="FDIC" 
+                alt="Umurindi" 
                 width={80} 
                 height={40} 
                 className="h-8 w-auto" 
               />
               <Image 
-                src="/security-cert.svg" 
+                src="/security-shield-svgrepo-com.svg" 
                 alt="Certification de Sécurité" 
                 width={80} 
                 height={40} 
