@@ -8,15 +8,18 @@ import Cookies from 'js-cookie'
 
 interface AuthState {
     user: User | null;
+    data: any | null;
+    error: any | null;
     isAuthenticated: boolean;
     isLoading: boolean;
     loadUser: () => Promise<void>;
     setAuth: (auth: boolean) => void;
     login: (email: string, password: string) => void;
+    register: (email: string, password: string, confirmPassword: string, dob: string, nationality: string, phone: string, lastName: string, firstName: string, gender:string) => void;
     logout: () => Promise<void>;
     verify: () => Promise<void>;
     finishInitialLoad: () => void;
-    activate: (token: string, uidbase64: string) => void;
+    activate: (uidb64: string, token: string) => void;
     resetPassword: (email: string) => Promise<void>;
 }
 
@@ -24,6 +27,8 @@ const useAuthStore = create<AuthState>((set) => ({
     user: null,
     isAuthenticated: false,
     isLoading: true,
+    data: null,
+    error: null,
 
     finishInitialLoad: () => set({ isLoading: false }),
     setAuth: (auth) => set({ isAuthenticated: auth }),
@@ -32,7 +37,7 @@ const useAuthStore = create<AuthState>((set) => ({
         try {
             const token = getToken();
             if (token) {
-                const response = await apiClient.get<User>("/auth/users/me");
+                const response = await apiClient.get<User>("/auth/users/me/");
                 set({ user: response.data, isAuthenticated: true });
             }
         } catch (error) {
@@ -50,7 +55,7 @@ const useAuthStore = create<AuthState>((set) => ({
             set({ user: response.data.user, isAuthenticated: true });
         } catch (error: any) {
             console.log("ERROR LOGIN", error);
-    
+
             // Vérifier si c'est une erreur de l'API et extraire le message
             const errorMessage =
                 error.response?.data?.detail === "No active account found with the given credentials"
@@ -84,8 +89,18 @@ const useAuthStore = create<AuthState>((set) => ({
         }
     },
 
-    activate: async(token, uidbase64) => {
+    activate: async (uidb64, token) => {
+        try{
+            const response = await apiClient.get(`/activate/${uidb64}/${token}/`)
+            set({ data: response.data, isLoading: false });
 
+        }catch (error: any) {
+            console.log(error)
+            set({ error, isLoading: false });
+            
+        } finally {
+            set({ isLoading: false });
+        }
     },
     verify: async () => {
         try {
@@ -103,6 +118,36 @@ const useAuthStore = create<AuthState>((set) => ({
             console.log(error)
         } finally {
             set({ isLoading: false });
+        }
+    },
+
+    // Register method
+    register: async (email, password, confirmPassword, dob, nationality, phone, lastName, firstName, gender) => {
+
+        try {
+            const response = await apiClient.post<AuthResponse>("/membres/", {
+                nom: firstName,
+                prenom: lastName,
+                sexe: gender,
+                date_naissance: dob,
+                nationalite: nationality,
+                user: {
+                    first_name: firstName,
+                    last_name: lastName,
+                    email,
+                    phone,
+                    password,
+                    re_password: confirmPassword
+                }
+             });
+        } catch (error: any) {
+            console.log("ERROR REGISTER", error);
+
+            const errorMessage =
+                error.response?.data?.message
+                    ? error.response?.data?.message
+                    : "Une erreur s'est produite lors de l'enregistrement. Veuillez réessayer.";
+            throw new Error(errorMessage);
         }
     },
 }))

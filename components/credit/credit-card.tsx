@@ -86,7 +86,7 @@ export function CreditCard({
         </div>
       </CardContent>
       <CardFooter className="mt-auto pt-6">
-        <Link href={`/credit/1`}>
+        <Link href={`/dashboard/credit/1`}>
         <Button className="w-full">investir dans ce credit</Button>
         </Link>
       </CardFooter>

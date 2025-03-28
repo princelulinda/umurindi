@@ -1,30 +1,30 @@
-"use client";
-
-import { useState } from "react";
+"use client"
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRegister } from "@/hooks/use-register";
+import useFeaturesStore from "@/stores/features";
+import { useEffect } from "react";
 
-type Step = {
-  title: string;
-  fields: {
-    name: string;
-    label: string;
-    type: string;
-    placeholder: string;
-  }[];
-};
-
-const steps: Step[] = [
+const stepss = [
   {
     title: "Informations personnelles",
     fields: [
       { name: "firstName", label: "Prénom", type: "text", placeholder: "Entrez votre prénom" },
       { name: "lastName", label: "Nom", type: "text", placeholder: "Entrez votre nom" },
       { name: "email", label: "Adresse e-mail", type: "email", placeholder: "Entrez votre e-mail" },
+      { name: "dob", label: "Date de naissance", type: "date", placeholder: "Entrez votre date de naissance" }, // Champ Date de naissance
+    ],
+  },
+  {
+    title: "Informations de contact",
+    fields: [
+      { name: "phone", label: "Numéro de téléphone", type: "tel", placeholder: "Entrez votre numéro de téléphone" },
+      { name: "gender", label: "Genre", type: "select", placeholder: "Choisissez votre genre" },
+      { name: "nationality", label: "Nationalité", type: "select", placeholder: "Choisissez votre nationalité" }, // Champ Nationalité
     ],
   },
   {
@@ -34,41 +34,24 @@ const steps: Step[] = [
       { name: "confirmPassword", label: "Confirmer le mot de passe", type: "password", placeholder: "Confirmez votre mot de passe" },
     ],
   },
-  {
-    title: "Informations de contact",
-    fields: [
-      { name: "phone", label: "Numéro de téléphone", type: "tel", placeholder: "Entrez votre numéro de téléphone" },
-      { name: "address", label: "Adresse", type: "text", placeholder: "Entrez votre adresse" },
-    ],
-  },
 ];
 
 export default function RegisterPage() {
+  const { loadNationality, nationalities, isLoading } = useFeaturesStore();
+  const {
+    formData,
+    currentStep,
+    steps,
+    handleInputChange,
+    handleNext,
+    handlePrevious,
+    handleSubmit,
+    loading
+  } = useRegister(stepss); // Utiliser le hook
 
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Record<string, string>>({});
-
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) setCurrentStep(currentStep - 1);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (currentStep === steps.length - 1) {
-      console.log("Formulaire soumis :", formData);
-    } else {
-      handleNext();
-    }
-  };
-
+  useEffect(() => {
+    loadNationality();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -77,7 +60,7 @@ export default function RegisterPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Retour à l'accueil
         </Link>
-        <h2 className="text-center text-3xl font-bold text-gray-900">Créer votre compte</h2>
+        <h2 className="text-center text-xl font-bold text-gray-900">Commencer à générer de revenus</h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -102,16 +85,44 @@ export default function RegisterPage() {
                   {field.label}
                 </label>
                 <div className="mt-1">
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type={field.type}
-                    required
-                    placeholder={field.placeholder}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleInputChange(field.name, e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#00a455] focus:border-[#00a455]"
-                  />
+                  {field.type === "select" ? (
+                    <select
+                      id={field.name}
+                      name={field.name}
+                      required
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleInputChange(field.name, e.target.value)}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#00a455] focus:border-[#00a455]"
+                    >
+                      {field.name === "gender"
+                        ? <>
+                          <option value="">Choisissez votre genre</option>
+                          <option value="Masculin">Masculin</option>
+                          <option value="Feminin">Féminin</option>
+                        </>
+                        : <>
+                          <option value="">Choisissez votre nationalité</option>
+                          {nationalities?.map((nationality) => (
+
+                            <option value={`${nationality.id}`}>{nationality.libelle}</option>
+                          ))}
+
+                        </>}
+
+                      {/* Ajoutez d'autres options ici */}
+                    </select>
+                  ) : (
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type={field.type}
+                      required
+                      placeholder={field.placeholder}
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleInputChange(field.name, e.target.value)}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#00a455] focus:border-[#00a455]"
+                    />
+                  )}
                 </div>
               </div>
             ))}
@@ -130,9 +141,9 @@ export default function RegisterPage() {
               )}
               <Button
                 type="submit"
-                className="flex-1 bg-[#00a455] text-white hover:bg-[#1b7ab3]"
+                className="flex-1 bg-[#00a455] text-white hover:bg-green-500"
               >
-                {currentStep === steps.length - 1 ? "Créer un compte" : <>Suivant <ArrowRight className="h-4 w-4 ml-2" /></>}
+                {currentStep === steps.length - 1 ? <>{loading ? <Loader2 className="animate-spin flex justify-center items-center" /> :"Créer un compte"}</> : <>Suivant <ArrowRight className="h-4 w-4 ml-2" /></>}
               </Button>
             </div>
           </form>

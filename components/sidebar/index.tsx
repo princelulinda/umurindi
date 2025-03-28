@@ -135,8 +135,8 @@ export default function SidebarComponent() {
               <AvatarFallback>UN</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-muted-foreground">john@example.com</p>
+              <p className="text-sm font-medium">{user?.first_name} {user?.last_name}</p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
           </div>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">

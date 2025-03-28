@@ -87,7 +87,7 @@ export default function LoginPage() {
             <div>
               <Button
                 type="submit"
-                className="w-full bg-[#00a455] text-white hover:bg-[#1b7ab3]"
+                className="w-full bg-[#00a455] text-white hover:bg-green-500"
               >
                 {loading ? <Loader2 className='animate-spin flex justify-center items-center' /> : "Se connecter"}
               </Button>

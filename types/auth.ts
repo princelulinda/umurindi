@@ -12,3 +12,13 @@ export interface AuthResponse {
     refresh: string;
     user: User;
 }
+
+export interface Nationality{
+	libelle: string;
+	id: string
+}
+
+export interface NationalityResponse{
+  message: string,
+  data: Nationality[]
+}

@@ -43,7 +43,7 @@ export function ProjectCard({ title, description, amount, progress, category, im
             <Progress value={progress} className="h-1.5" />
             <div className="flex justify-between items-center text-xs">
               <span className="text-muted-foreground">{progress}% atteint</span>
-              <Link href={`/projects/1`}>
+              <Link href={`/dashboard/projects/1`}>
                 <Button variant="outline" size="sm" className="h-8">
                   Investir
                 </Button>

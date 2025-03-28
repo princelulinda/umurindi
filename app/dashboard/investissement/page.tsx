@@ -181,7 +181,7 @@ export default function InvestissementPage() {
                   <Button 
                     variant="default" 
                     className="w-full mt-2 hover:scale-[1.02] transition-transform"
-                    onClick={() => window.location.href = `/investissement/${investment.id}`}
+                    onClick={() => window.location.href = `/dashboard/investissement/${investment.id}`}
                   >
                     Voir les détails
                   </Button>
