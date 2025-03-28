@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <>
           <Setup />
-          <NextTopLoader
+          <NextTopLoader  
             color="#00a455"
             initialPosition={0.08}
             crawlSpeed={200}

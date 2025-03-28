@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Percent, CalendarDays, AlertCircle, CheckCircle2, Users, Building, ArrowRight } from "lucide-react"
+import { Clock, Percent,AlertCircle, CheckCircle2, Users, Building, ArrowRight } from "lucide-react"
 
 // Simuler les données d'un crédit
 const creditData = {
@@ -48,7 +48,7 @@ const creditData = {
   }
 }
 
-export default function CreditDetails({ params }: { params: { id: string } }) {
+export default function CreditDetails() {
   return (
     <div className="space-y-8 p-8 w-full mx-auto">
       {/* En-tête */}
