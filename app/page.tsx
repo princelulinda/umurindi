@@ -1,8 +1,10 @@
 "use client"
 
+import ProjectItem from "@/components/ProjectItem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MobileNav } from "@/components/ui/mobile-nav";
+
 import { DollarSign, Building2, Users, LineChart, Search, Facebook, Twitter, Linkedin, Instagram, ArrowRight, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,12 +17,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
-              <Image 
-                src="/umurindi.jpeg" 
-                alt="Logo Umurindi" 
-                className='rounded-lg object-cover' 
-                width={40} 
-                height={40} 
+              <Image
+                src="/umurindi.jpeg"
+                alt="Logo Umurindi"
+                className='rounded-lg object-cover'
+                width={40}
+                height={40}
               />
               <span className="text-2xl font-extrabold bg-gradient-to-r from-[#00a455] to-[#1b7ab3] bg-clip-text text-transparent">
                 Umurindi
@@ -67,10 +69,10 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link href="/auth/register">
-                <Button className="bg-[#00a455] hover:bg-[#008a48] text-white px-8 py-6 text-lg font-medium shadow-lg transition-all hover:shadow-xl">
-                  Commencer maintenant
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                  <Button className="bg-[#00a455] hover:bg-[#008a48] text-white px-8 py-6 text-lg font-medium shadow-lg transition-all hover:shadow-xl">
+                    Commencer maintenant
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
                 </Link>
                 <Button variant="outline" className="border-white text-gray-400 hover:bg-white/10 hover:text-gray-300 px-8 py-6 text-lg font-medium">
                   En savoir plus
@@ -115,8 +117,8 @@ export default function Home() {
                 <span className="text-[#1b7ab3]">Récoltez</span> les Bénéfices.
               </h2>
               <p className="text-lg text-gray-600">
-                Rejoignez une coopérative qui valorise vos investissements et finance des projets porteurs d'avenir. 
-                En tant que membre, vous pouvez investir dans des initiatives prometteuses, obtenir des crédits 
+                Rejoignez une coopérative qui valorise vos investissements et finance des projets porteurs d'avenir.
+                En tant que membre, vous pouvez investir dans des initiatives prometteuses, obtenir des crédits
                 avantageux et bénéficier des rendements générés par la communauté.
               </p>
               <div className="pt-4">
@@ -146,6 +148,7 @@ export default function Home() {
         </div>
       </section>
 
+
       {/* Section Coopérative pour les Entrepreneurs - Version améliorée */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -170,8 +173,8 @@ export default function Home() {
                 Soutenez la croissance de votre <span className="text-[#1b7ab3]">entreprise</span>
               </h2>
               <p className="text-lg text-gray-600">
-                Notre coopérative vous accompagne dans le développement de votre activité avec des solutions 
-                d'investissement adaptées et des crédits avantageux. Nous croyons en votre potentiel et 
+                Notre coopérative vous accompagne dans le développement de votre activité avec des solutions
+                d'investissement adaptées et des crédits avantageux. Nous croyons en votre potentiel et
                 vous aidons à concrétiser vos projets.
               </p>
               <ul className="space-y-3 pt-2">
@@ -281,7 +284,7 @@ export default function Home() {
                 Votre coopérative aussi.
               </h2>
               <p className="text-lg text-gray-600">
-                Nous sommes une coopérative dédiée à servir les besoins de nos membres. Grâce à notre modèle coopératif, 
+                Nous sommes une coopérative dédiée à servir les besoins de nos membres. Grâce à notre modèle coopératif,
                 nous nous concentrons sur le succès de nos membres tout en ayant un impact positif dans nos communautés.
               </p>
               <div className="pt-4">
@@ -373,12 +376,12 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <Image 
-                  src="/umurindi.jpeg" 
-                  alt="Logo Umurindi" 
-                  className='rounded-lg object-cover' 
-                  width={40} 
-                  height={40} 
+                <Image
+                  src="/umurindi.jpeg"
+                  alt="Logo Umurindi"
+                  className='rounded-lg object-cover'
+                  width={40}
+                  height={40}
                 />
                 <span className="text-xl font-extrabold bg-gradient-to-r from-[#00a455] to-[#1b7ab3] bg-clip-text text-transparent">
                   Umurindi
@@ -436,19 +439,19 @@ export default function Home() {
               © {new Date().getFullYear()} Umurindi. Tous droits réservés.
             </p>
             <div className="flex items-center space-x-6">
-              <Image 
-                src="/fdic-logo.svg" 
-                alt="Umurindi" 
-                width={80} 
-                height={40} 
-                className="h-8 w-auto" 
+              <Image
+                src="/fdic-logo.svg"
+                alt="Umurindi"
+                width={80}
+                height={40}
+                className="h-8 w-auto"
               />
-              <Image 
-                src="/security-shield-svgrepo-com.svg" 
-                alt="Certification de Sécurité" 
-                width={80} 
-                height={40} 
-                className="h-8 w-auto" 
+              <Image
+                src="/security-shield-svgrepo-com.svg"
+                alt="Certification de Sécurité"
+                width={80}
+                height={40}
+                className="h-8 w-auto"
               />
             </div>
           </div>

@@ -27,7 +27,7 @@ const menuSections: MenuSection[] = [
   {
     title: 'Principal',
     items: [
-      { icon: Home, label: 'Accueil', href: '/' },
+      { icon: Home, label: 'Dashboard', href: '/dashboard' },
       { icon: LayoutDashboard, label: 'Credit', href: '/dashboard/credit', badge: '10' },
       { icon: FolderOpenDot, label: 'Projets', href: '/dashboard/projects', badge: '5' },
     ]

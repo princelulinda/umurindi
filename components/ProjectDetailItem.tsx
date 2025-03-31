@@ -1,5 +1,6 @@
-'use client'
+"use client";
 
+import useFeaturesStore from "@/stores/features"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,32 +17,26 @@ import {
   ArrowRight,
   Download
 } from "lucide-react"
-import useFeaturesStore from "@/stores/features"
-import { useEffect, useState } from "react"
 
+import { useEffect } from "react"
 
-// Simuler les données d'un projet
+interface Props {
+    slug: string
+}
 
+const ProjectDetail = ({ slug }: Props) => {
 
+    const { project, isLoading, loadProjectBySlug } = useFeaturesStore();
 
-export default function ProjectDetails({ params }: { params: { id: string } }) {
+    loadProjectBySlug(slug);
+    
+    
+      if (isLoading || !project) {
+        return <p>Chargement</p>;
+      }
 
-  const { project, isLoading, loadProjectBySlug } = useFeaturesStore();
-  const [clientSide, setClientSide] = useState(false);
-
-   useEffect(() => {
-    setClientSide(true); // Signale que le code est exécuté côté client
-    if (params.id) {
-      loadProjectBySlug(params.id);
-    }
-  }, [params.id]);
-
-  if (!clientSide || !project) {
-    return <p>Chargement...</p>;
-  }
-
-  return (
-    <div className="space-y-8 p-8 flex-1">
+    return (
+        <div className="space-y-8 p-8 flex-1">
       {/* En-tête */}
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
@@ -97,7 +92,7 @@ export default function ProjectDetails({ params }: { params: { id: string } }) {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Rendement prévu</p>
-                <p className="font-medium">{project.interet_estimer}</p>
+                <p className="font-medium">{project.expectedReturn}</p>
               </div>
             </CardContent>
           </Card>
@@ -133,23 +128,23 @@ export default function ProjectDetails({ params }: { params: { id: string } }) {
                 <Progress value={project.total_investment} className="h-2" />
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Collecté</span>
-                  <span className="font-medium">{project.budget}</span>
+                  <span className="font-medium">{project.currentlyRaised}</span>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Investissement minimum</p>
-                <p className="text-2xl font-bold">{project.budget_part}</p>
+                <p className="text-2xl font-bold">{project.minInvestment}</p>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Rendement prévu: {project.interet_estimer}</span>
+                  <span className="text-sm">Rendement prévu: {project.expectedReturn}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Durée: {project.delai_realisation} mois</span>
+                  <span className="text-sm">Durée: 12 mois</span>
                 </div>
               </div>
 
@@ -168,5 +163,8 @@ export default function ProjectDetails({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
-  )
+    )
 }
+
+
+export default ProjectDetail

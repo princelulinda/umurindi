@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search, Filter } from 'lucide-react'
+import ProjectItem from '@/components/ProjectItem'
 
 // Données de test pour les projets
 const projects = [
@@ -175,11 +176,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Liste des projets */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProjects.map((project) => (
-          <ProjectCard key={project.id} {...project} />
-        ))}
-      </div>
+      <ProjectItem display={3} />
 
       {filteredProjects.length === 0 && (
         <div className="text-center py-12">

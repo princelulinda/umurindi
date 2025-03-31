@@ -7,6 +7,7 @@ import { Wallet, TrendingUp, PiggyBank, ArrowUpRight, ArrowDownRight, Users } fr
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import useAuthStore from '@/stores/authStore'
+import ProjectItem from '@/components/ProjectItem'
 
 const recentTransactions = [
     {
@@ -29,27 +30,6 @@ const recentTransactions = [
         amount: '-200.000 BIF',
         date: '18 Mars 2025',
         type: 'debit',
-    },
-]
-
-const projectProposals = [
-    {
-        id: 1,
-        title: 'Ferme Agricole Moderne',
-        description: 'Projet d\'agriculture moderne utilisant des techniques innovantes pour augmenter la production',
-        amount: '5.000.000 BIF',
-        progress: 65,
-        category: 'Agriculture',
-        image: '/pexels-clement-proust-363898785-31205726.jpg',
-    },
-    {
-        id: 2,
-        title: 'Élevage de Volailles',
-        description: 'Installation d\'une ferme avicole moderne pour la production d\'œufs et de viande',
-        amount: '3.000.000 BIF',
-        progress: 40,
-        category: 'Élevage',
-        image: '/pexels-safari-consoler-3290243-15897036.jpg',
     },
 ]
 
@@ -113,11 +93,7 @@ export default function Home() {
                             <h2 className="text-lg font-semibold">Projets Recommandés</h2>
                             <Button variant="outline" size="sm">Voir tout</Button>
                         </div>
-                        <div className="grid gap-6 sm:grid-cols-2">
-                            {projectProposals.map((project) => (
-                                <ProjectCard key={project.id} {...project} />
-                            ))}
-                        </div>
+                        <ProjectItem display={2} />
                     </div>
                 </div>
 

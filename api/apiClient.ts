@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken, refreshToken } from './authService';
 
 const apiClient = axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_HOST}`,
+    baseURL: `https://umurindi-production.up.railway.app/api/v1`,
     timeout: 15000,
     headers: {
         "Content-Type": "application/json",

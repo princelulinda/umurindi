@@ -20,8 +20,8 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Veuillez entrer une adresse email valide",
   }),
-  password: z.string().min(8, {
-    message: "Le mot de passe doit contenir au moins 8 caractères",
+  password: z.string().min(1, {
+    message: "Le mot de passe doit pas être vide",
   }),
   remember: z.boolean().optional(),
 });
@@ -42,10 +42,8 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await handleLogin(values.email, values.password);
-      toast.success("Connexion réussie !");
-      router.push("/dashboard");
+  
     } catch (error) {
-      toast.error("Échec de la connexion. Veuillez vérifier vos identifiants.");
       console.error("Erreur de connexion :", error);
     }
   }
