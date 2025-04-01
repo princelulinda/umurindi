@@ -28,25 +28,18 @@ export default function RootLayout({
 }>) {
     
     return (
-        <html lang="fr" className="h-full">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
-            >
-                <RequireAuth>
+  <RequireAuth>
                     <SidebarProvider >
-                        <div className="flex h-full">
+                        {/* <div className="flex h-full"> */}
                             <SidebarComponent />
-                            <div className="flex-1 md:ml-[5%] flex flex-col">
+                            {/* <div className="flex-1 md:ml-[5%] flex flex-col"> */}
                                 <Navbar />
-                                <main className="pt-16 px-4 sm:px-8 overflow-auto flex-1">
+                                <main className="pt-16 px-4 sm:px-8 overflow-auto flex-1 md:ml-[5%]">
                                     {children}
                                 </main>
-                            </div>
-                        </div>
+                            {/* </div> */}
+                        {/* </div> */}
                     </SidebarProvider>
                 </RequireAuth>
-
-            </body>
-        </html>
     );
 }

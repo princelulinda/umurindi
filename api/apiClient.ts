@@ -15,6 +15,8 @@ apiClient.interceptors.request.use(async (config) => {
     if (token) {
         config.headers.Authorization = `JWT ${token}`;
     }
+    console.log("CONFIG", config);
+    
     return config;
 }, (error) => Promise.reject(error));
 

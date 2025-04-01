@@ -11,12 +11,14 @@ export function useLogin() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter()
+    const loadUser = useAuthStore((state) => state.loadUser)
 
     const handleLogin = async (email: string, password: string) => {
         setLoading(true);
         setError(null);
         try {
             await login(email, password);
+            loadUser()
             router.push("/dashboard")
             toast.success("Connecté")
         } catch (err: any) {

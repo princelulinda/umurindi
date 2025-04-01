@@ -52,7 +52,7 @@ const useAuthStore = create<AuthState>((set) => ({
         try {
             const response = await apiClient.post<AuthResponse>("/auth/jwt/create/", { email, password });
             saveTokens(response.data.access, response.data.refresh);
-            set({ user: response.data.user, isAuthenticated: true });
+            set({  isAuthenticated: true });
         } catch (error: any) {
             console.log("ERROR LOGIN", error);
 

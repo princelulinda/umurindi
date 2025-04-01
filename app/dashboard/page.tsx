@@ -1,5 +1,4 @@
 'use client'
-
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { ProjectCard } from '@/components/dashboard/project-card'
 import { QuickActions } from '@/components/dashboard/quick-actions'
@@ -8,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import useAuthStore from '@/stores/authStore'
 import ProjectItem from '@/components/ProjectItem'
+import { useEffect } from 'react'
 
 const recentTransactions = [
     {
@@ -34,12 +34,16 @@ const recentTransactions = [
 ]
 
 export default function Home() {
-    const { user, isAuthenticated, isLoading } = useAuthStore();
+    const { user, isAuthenticated, isLoading, loadUser} = useAuthStore();
+
+    useEffect(() => {
+        loadUser();    
+    }, [loadUser]);
 
     return (
         <div className="w-full mx-auto space-y-8 pt-16">
-            {/* Welcome Section */}
-            <div className="flex items-center justify-between">
+          {/* Welcome Section */}
+          <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">Bonjour, {user?.first_name} 👋</h1>
                     <p className="text-muted-foreground">Voici un aperçu de vos investissements</p>
@@ -171,7 +175,7 @@ export default function Home() {
             </CardContent>
           </Card> */}
                 </div>
-            </div>
+            </div>  
         </div>
     )
 }

@@ -21,7 +21,13 @@ const useFeaturesStore = create<featuresState>((set) => ({
     investissements: null,
     projects: null,
     project: null,
+    investiNow: async (data) => {
 
+            const response = await apiClient.post<InvestissementResponse>('/investissements/',data);
+            console.log(response.data, "response");
+            return response
+        
+      },
     loadNationality: async () => {
         try {
             const response = await apiClient.get<NationalityResponse>("/nationalites/")
@@ -45,10 +51,12 @@ const useFeaturesStore = create<featuresState>((set) => ({
             set({ isLoading: false });
         }
     },
-
+ 
     loadProjects: async () => {
         try {
             const response = await apiClient.get<ProjectResponse>('/projets/');
+            // console.log(response.data, "response");
+            
             set({ projects: response.data.data });
         } catch (error: any) {
             set({ projects: null });
@@ -62,7 +70,9 @@ const useFeaturesStore = create<featuresState>((set) => ({
         set({ isLoading: true });
         try {
             const response = await apiClient.get<Project>(`/projets/${slug}/`);
-            set({ project: response.data });
+            console.log(response.data, "response");
+            
+            set({ project: response.data?.data });
         } catch (error) {
             console.error("Error fetching project details:", error);
             set({ project: null });

@@ -16,6 +16,8 @@ const ProjectItem = ({
 
     useEffect(() => {
         loadProjects();
+        console.log("PROJECTS", projects);
+        
     }, []);
 
     return (
@@ -24,7 +26,7 @@ const ProjectItem = ({
             {isLoading ? (
                 <p>Chargement des projets...</p>
             ) : projects && projects.length > 0 ? (
-                <div className={`grid gap-6 sm:grid-cols-${display}`}>
+                <div className={`grid gap-6 sm:grid-cols-${display} md:grid-cols-3`}>
                     {projects.map((project) => (
                         <ProjectCard key={project.id} {...project} />
                     ))}
