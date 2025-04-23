@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getToken, refreshToken } from './authService';
 
+
 const apiClient = axios.create({
-    baseURL: `https://umurindi-production.up.railway.app/api/v1`,
+    baseURL: `https://umulindi.inspirationrdc.com/api/v1`,
     timeout: 15000,
     headers: {
         "Content-Type": "application/json",
@@ -31,6 +32,8 @@ apiClient.interceptors.response.use(
 
             try {
                 const newToken = await refreshToken();
+                console.log("NEW TOKEN", newToken);
+                
                 if (newToken) {
                     originalRequest.headers.Authorization = `JWT ${newToken}`;
                     return apiClient(originalRequest); 

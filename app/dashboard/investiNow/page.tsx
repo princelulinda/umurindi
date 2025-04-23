@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Slider } from "@/components/ui/slider"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { DollarSign, ChevronLeft, CheckCircle2, PieChart, TrendingUp, AlertCircle } from "lucide-react"
@@ -10,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import useFeaturesStore from "@/stores/features"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -46,6 +46,11 @@ export default function InvestmentForm() {
     }).format(value)
   }
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value.replace(/\D/g, '')) || 0
+    setAmount(value)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -53,15 +58,15 @@ export default function InvestmentForm() {
 
     try {
       if (!amount || !parts || !motif || !project?.id) {
-        throw new Error("Veuillez remplir tous les champs requis")
+        setError("Veuillez remplir tous les champs requis")
       }
 
       if (amount < minInvestment) {
-        throw new Error(`Le montant minimum est de ${formatCurrency(minInvestment)}`)
+        setError(`Le montant minimum est de ${formatCurrency(minInvestment)}`)
       }
 
       if (amount > maxInvestment) {
-        throw new Error(`Le montant maximum est de ${formatCurrency(maxInvestment)}`)
+        setError(`Le montant maximum est de ${formatCurrency(maxInvestment)}`)
       }
 
       const result = await investiNow({
@@ -71,10 +76,6 @@ export default function InvestmentForm() {
         motif
       })
 
-    //   if (!result?.success) {
-    //     throw new Error(result?.message || "Erreur lors de l'investissement")
-    //   }
-   
     } catch (error) {
       console.error("Erreur:", error)
       setError(error instanceof Error ? error?.response?.data.message : "Une erreur inattendue est survenue")
@@ -127,28 +128,18 @@ export default function InvestmentForm() {
               <CardContent className="pt-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <Label>Montant</Label>
-                      <span className="font-medium">{formatCurrency(amount)}</span>
+                    <Label htmlFor="amount">Montant (BIF)</Label>
+                    <Input
+                      id="amount"
+                      type="text"
+                      value={formatCurrency(amount).replace('BIF', '').trim()}
+                      onChange={handleAmountChange}
+                      className="mt-2"
+                    />
+                    <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                      <span>Min: {formatCurrency(minInvestment)}</span>
+                      <span>Max: {formatCurrency(maxInvestment)}</span>
                     </div>
-                    
-                    {minInvestment > 0 && (
-                      <>
-                        <Slider
-                          value={[amount]}
-                          min={minInvestment}
-                          max={maxInvestment}
-                          step={minInvestment}
-                          onValueChange={([value]) => setAmount(value)}
-                          className="my-4"
-                        />
-                        
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                          <span>Min: {formatCurrency(minInvestment)}</span>
-                          <span>Max: {formatCurrency(maxInvestment)}</span>
-                        </div>
-                      </>
-                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

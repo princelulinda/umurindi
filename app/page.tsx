@@ -1,6 +1,5 @@
 "use client"
 
-import ProjectItem from "@/components/ProjectItem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MobileNav } from "@/components/ui/mobile-nav";

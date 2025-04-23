@@ -26,19 +26,19 @@ export function ProjectCard({
   // Formatage des montants
   const formattedBudget = new Intl.NumberFormat('fr-FR', { 
     style: 'currency', 
-    currency: 'EUR' 
+    currency: 'BIF' 
   }).format(Number(budget));
   
   const formattedInterest = new Intl.NumberFormat('fr-FR', { 
     style: 'currency', 
-    currency: 'EUR' 
+    currency: 'BIF' 
   }).format(Number(interet_estimer));
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border border-gray-100 dark:border-gray-800 group">
       {/* En-tête avec image */}
-      <div className="relative h-48 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700">
-        {image ? (
+      <div className="relative  bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700">
+        {/* {image ? (
           <img
             src={image}
             alt={title}
@@ -50,8 +50,8 @@ export function ProjectCard({
               {title.charAt(0).toUpperCase()}
             </div>
           </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        )} */}
+        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" /> */}
         <div className="absolute top-4 left-4">
           <Badge variant="secondary" className="bg-white/90 dark:bg-gray-900/80 text-gray-800 dark:text-gray-200">
             {category.title}

@@ -92,6 +92,8 @@ const useAuthStore = create<AuthState>((set) => ({
     activate: async (uidb64, token) => {
         try{
             const response = await apiClient.get(`/activate/${uidb64}/${token}/`)
+            console.log(response.data, "ACTIVATION OKAY");
+            
             set({ data: response.data, isLoading: false });
 
         }catch (error: any) {
@@ -110,7 +112,7 @@ const useAuthStore = create<AuthState>((set) => ({
             const res = await apiClient.post("/auth/jwt/verify/", {
                 "token": token
             });
-            console.log("GETTING VERIFY OKAY")
+            console.log(res,"GETTING VERIFY OKAY")
             // Si la vérification réussit, on met l'utilisateur comme authentifié
             set({ isAuthenticated: true });
         } catch (error) {

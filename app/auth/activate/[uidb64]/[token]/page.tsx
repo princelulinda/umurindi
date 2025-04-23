@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import useAuthStore from "@/stores/authStore";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function Page({ params }: Props) {
-	const { uidb64, token } = params;
+	const { uidb64, token } = use(params);
 	const router = useRouter();
 
 	const activate = useAuthStore((state) => state.activate);

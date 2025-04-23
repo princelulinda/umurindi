@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import apiClient from './apiClient';
+import { redirect } from 'next/navigation';
 
 const TOKEN_KEY = 'access';
 const REFRESH_TOKEN_KEY = 'refresh';
@@ -29,6 +30,8 @@ export const refreshToken = async (): Promise<string> => {
     } catch (error) {
         Cookies.remove(TOKEN_KEY);
         Cookies.remove(REFRESH_TOKEN_KEY);
+        redirect('/login')
+        
         console.log("ERROR FROM REFRESH TOKEN", error);
         throw error;
     }

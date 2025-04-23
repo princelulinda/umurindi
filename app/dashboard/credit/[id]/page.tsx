@@ -1,240 +1,244 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Clock, Percent,AlertCircle, CheckCircle2, Users, Building, ArrowRight } from "lucide-react"
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, CalendarDays, Clock, DollarSign, Percent, Shield, Users, AlertCircle, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import useFeaturesStore from '@/stores/features'
+import { Skeleton } from '@/components/ui/skeleton'
+import { InvestmentModal } from '@/components/dashboard/creditInvestiModal'
 
-// Simuler les données d'un crédit
-const creditData = {
-  id: 1,
-  title: 'Crédit Agricole Plus',
-  description: 'Solution de financement complète pour les projets agricoles et d\'élevage',
-  amount: '10.000.000 BIF',
-  minAmount: '1.000.000 BIF',
-  duration: '24 mois',
-  interestRate: '8%',
-  status: 'Disponible',
-  totalInvestors: 45,
-  currentlyInvested: '8.500.000 BIF',
-  progress: 85,
-  requirements: [
-    'Être agriculteur ou éleveur professionnel',
-    'Avoir un projet viable et documenté',
-    'Garanties requises (terrain, équipement)',
-    'Expérience minimum de 2 ans dans le secteur'
-  ],
-  benefits: [
-    'Taux d\'intérêt préférentiel',
-    'Période de grâce de 3 mois',
-    'Accompagnement technique',
-    'Assurance récolte incluse'
-  ],
-  documents: [
-    'Carte d\'identité',
-    'Attestation d\'activité',
-    'Plan d\'affaires',
-    'États financiers des 2 dernières années',
-    'Justificatifs des garanties'
-  ],
-  institution: {
-    name: 'Banque Agricole du Burundi',
-    type: 'Banque commerciale',
-    rating: 4.5,
-    projects: 156,
-    yearsActive: 15
+export default function CreditDetailPage() {
+  const { id } = useParams()
+  const { credit, isLoading, loadCredit } = useFeaturesStore()
+  const [creditDetail, setCreditDetail] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    loadCredit().then(() => {
+      const foundCredit = credit?.find(c => c.id === Number(id))
+      setCreditDetail(foundCredit)
+    })
+  }, [id])
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'BIF',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(parseFloat(value))
   }
-}
 
-export default function CreditDetails() {
-  return (
-    <div className="space-y-8 p-8 w-full mx-auto">
-      {/* En-tête */}
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold lg:w-[130vh]">{creditData.title}</h1>
-            <p className="text-muted-foreground mt-2">{creditData.description}</p>
+  const calculateProgress = () => {
+    if (!creditDetail) return 0
+    const invested = parseFloat(creditDetail.total_investment || '0')
+    const total = parseFloat(creditDetail.montant || '1')
+    return Math.min(100, Math.round((invested / total) * 100))
+  }
+
+  if (isLoading || !creditDetail) {
+    return (
+      <div className="container py-8">
+        <div className="flex flex-col gap-8">
+          <Skeleton className="h-10 w-24" />
+          
+          <div className="grid gap-6 md:grid-cols-3">
+            <Skeleton className="h-32" />
+            <Skeleton className="h-32" />
+            <Skeleton className="h-32" />
           </div>
-          <Badge variant="outline" className="h-6">
-            {creditData.status}
-          </Badge>
-        </div>
-
-        {/* Stats principales */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardContent className="flex items-center gap-4 pt-6">
-              <div className="p-2 rounded-full bg-primary/10">
-                <Percent className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Taux d&apos;intérêt</p>
-                <p className="text-2xl font-bold">{creditData.interestRate}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 pt-6">
-              <div className="p-2 rounded-full bg-primary/10">
-                <Clock className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Durée</p>
-                <p className="text-2xl font-bold">{creditData.duration}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 pt-6">
-              <div className="p-2 rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Investisseurs</p>
-                <p className="text-2xl font-bold">{creditData.totalInvestors}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 pt-6">
-              <div className="p-2 rounded-full bg-primary/10">
-                <Building className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Institution</p>
-                <p className="text-2xl font-bold">{creditData.institution.rating}★</p>
-              </div>
-            </CardContent>
-          </Card>
+          
+          <div className="grid gap-6 md:grid-cols-2">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-64" />
+          </div>
         </div>
       </div>
+    )
+  }
 
-      {/* Contenu principal */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
-          {/* Onglets d'information */}
-          <Tabs defaultValue="details" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="details">Détails</TabsTrigger>
-              <TabsTrigger value="requirements">Conditions</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
-            </TabsList>
-            <TabsContent value="details" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Avantages du crédit</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {creditData.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>À propos de l&apos;institution</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+  return (
+    <div className="container py-6 sm:py-8">
+      {/* Bouton de retour */}
+      <Link href="/dashboard/credit" className="inline-block mb-6">
+        <Button variant="outline" className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Retour aux crédits
+        </Button>
+      </Link>
+
+      {/* En-tête */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Prêt #{creditDetail.id}</h1>
+          <p className="text-muted-foreground">{creditDetail.motif}</p>
+        </div>
+        <Badge variant={creditDetail.statut_label === 'Validé' ? 'default' : 'outline'}>
+          {creditDetail.statut_label === 'Validé' && <CheckCircle className="h-4 w-4 mr-2" />}
+          {creditDetail.statut_label}
+        </Badge>
+      </div>
+
+      {/* Cartes de statistiques */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Montant total</p>
+                <p className="text-2xl font-bold">{formatCurrency(creditDetail.montant)}</p>
+              </div>
+              <div className="p-3 rounded-lg bg-primary/10">
+                <DollarSign className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Taux d'intérêt</p>
+                <p className="text-2xl font-bold">{creditDetail.taux_interet}%</p>
+              </div>
+              <div className="p-3 rounded-lg bg-primary/10">
+                <Percent className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Durée</p>
+                <p className="text-2xl font-bold">{creditDetail.delai_rembourssement} mois</p>
+              </div>
+              <div className="p-3 rounded-lg bg-primary/10">
+                <CalendarDays className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Progression et Détails */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Progression du financement</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    {formatCurrency(creditDetail.total_investment || '0')} investis
+                  </span>
+                  <span className="text-sm font-medium">
+                    {formatCurrency(creditDetail.remaining_budget)} restants
+                  </span>
+                </div>
+                <Progress value={calculateProgress()} className="h-3" />
+                <p className="text-sm text-muted-foreground mt-2">
+                  {calculateProgress()}% du montant total atteint
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-primary/10">
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
                   <div>
-                    <p className="font-medium">{creditData.institution.name}</p>
-                    <p className="text-sm text-muted-foreground">{creditData.institution.type}</p>
+                    <p className="font-medium">Caution</p>
+                    <p className="text-sm text-muted-foreground">{creditDetail.causion}% du montant</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Projets financés</p>
-                      <p className="font-medium">{creditData.institution.projects}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Années d&apos;activité</p>
-                      <p className="font-medium">{creditData.institution.yearsActive} ans</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="requirements">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Conditions requises</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {creditData.requirements.map((req, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <span className="text-muted-foreground">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="documents">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Documents nécessaires</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {creditData.documents.map((doc, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <span className="text-muted-foreground">{doc}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+                </div>
 
-        {/* Carte d'investissement */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Investir dans ce crédit</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-primary/10">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Investisseurs</p>
+                    <p className="text-sm text-muted-foreground">0 participants</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Détails du prêt</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Progression</span>
-                  <span className="text-sm font-medium">{creditData.progress}%</span>
-                </div>
-                <Progress value={creditData.progress} className="h-2" />
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Investi</span>
-                  <span className="font-medium">{creditData.currentlyInvested}</span>
-                </div>
+                <h3 className="font-medium">Description</h3>
+                <p className="text-sm text-muted-foreground">
+                  {creditDetail.motif || 'Aucune description disponible'}
+                </p>
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Montant minimum</p>
-                <p className="text-2xl font-bold">{creditData.minAmount}</p>
+                <h3 className="font-medium">Conditions</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Montant minimum par investisseur : {formatCurrency(creditDetail.montant_part)}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Remboursement mensuel sur {creditDetail.delai_rembourssement} mois</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Taux d'intérêt fixe de {creditDetail.taux_interet}%</span>
+                  </li>
+                </ul>
               </div>
-
-              <Button className="w-full">Investir maintenant</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <Button variant="outline" className="w-full">
-                Télécharger la brochure
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* CTA */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="max-w-lg">
+          <h3 className="font-medium mb-2">Intéressé par ce prêt ?</h3>
+          <p className="text-sm text-muted-foreground">
+            Investissez dans ce projet et bénéficiez d'un retour sur investissement garanti.
+          </p>
+        </div>
+        <Button 
+        onClick={() => setIsModalOpen(true)}
+        size="lg" className="w-full sm:w-auto">
+          Investir maintenant
+        </Button>
+      </div>
+      <InvestmentModal
+        creditId={creditDetail.id}
+        minAmount={parseFloat(creditDetail.montant_part)}
+        maxAmount={parseFloat(creditDetail.remaining_budget)}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        montant_part={creditDetail.montant_part}
+        onInvest={async (amount, parts) => {
+            console.log(amount, parts);
+
+        }}
+        
+/>
     </div>
   )
 }
