@@ -2,6 +2,7 @@ import { Nationality, NationalityResponse } from './../types/auth';
 import { create } from 'zustand';
 import apiClient from '@/api/apiClient';
 import { Investissement, InvestissementResponse, Project, ProjectResponse } from '@/types/projet';
+import axios, { Axios } from 'axios';
 
 interface FeaturesState {
     isLoading: boolean;
@@ -19,6 +20,8 @@ interface FeaturesState {
     loadCredit: () => Promise<void>;
     investiNow: (data: Partial<Investissement>) => Promise<InvestissementResponse>;
     InvestissementsCredit: (data: Partial<Investissement>) => Promise<any>;
+    withdrawRequest:(data:any)=>Promise<any>;
+    transactions:string[]
     
 }
 
@@ -29,6 +32,7 @@ const useFeaturesStore = create<FeaturesState>((set) => ({
     projects: null,
     project: null,
     credit: null,
+    transactions: [],
 
     investiNow: async (data) => {
         try {
@@ -56,6 +60,8 @@ const useFeaturesStore = create<FeaturesState>((set) => ({
     loadInvestissements: async () => {
         try {
             const response = await apiClient.get<InvestissementResponse>('/investissements/');
+            console.log(response);
+            
             set({ investissements: response.data.data });
         } catch (error) {
             console.error("Erreur lors du chargement des investissements :", error);
@@ -96,7 +102,7 @@ const useFeaturesStore = create<FeaturesState>((set) => ({
             const response = await apiClient.get<{ credits: Investissement[] }>("/credit/valides-all/");
             console.log(response.data, "CHARGEMENT CREDIT OKAY");
             
-            set({ credit: response.data?.credits});
+            set({ credit: response.data?.data});
         } catch (error) {
             console.error("Erreur lors du chargement des crédits :", error);
             set({ credit: null });
@@ -110,7 +116,7 @@ const useFeaturesStore = create<FeaturesState>((set) => ({
             const response = await apiClient.get<{ credits: Investissement[] }>("/credit/");
             console.log(response.data, "CHARGEMENT CREDIT OKAY");
             
-            set({ credit: response.data});
+            set({ credit: response?.data.credits});
         } catch (error) {
             console.error("Erreur lors du chargement des crédits :", error);
             set({ credit: null });
@@ -143,6 +149,86 @@ const useFeaturesStore = create<FeaturesState>((set) => ({
             throw error
         } 
     },
+ withdrawRequest: async (data:{motif: string, montant:string})=>{
+    try {
+        const response = await apiClient.post<{ credits: Investissement[] }>("/transactions/demande-retrait/", data);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        throw error
+    }
+ },
+
+ loadTransactions: async () => {
+    set({ loading: true, error: null })
+    
+    try {
+      const response = await apiClient.get<TransactionApiResponse>('/transactions/')
+
+      const formattedTransactions = response.data.data.map(tx => {
+        // Détermine le type de transaction
+        let transactionType: Transaction['type']
+        switch (tx.type_transaction) {
+          case 'depot':
+            transactionType = 'deposit'
+            break
+          case 'retrait':
+            transactionType = 'withdrawal'
+            break
+          case 'dividende':
+            transactionType = 'dividend'
+            break
+          case 'transfert':
+            transactionType = 'transfer'
+            break
+          default:
+            transactionType = 'investment'
+        }
+
+        const amount = tx.entrer !== "0.00" 
+          ? parseFloat(tx.entrer) 
+          : -parseFloat(tx.sortie)
+
+        return {
+          id: tx.id,
+          type: transactionType,
+          typeDisplay: tx.type_transaction_display,
+          amount,
+          initialBalance: parseFloat(tx.initial),
+          finalBalance: parseFloat(tx.solde),
+          status: tx.statut_display,
+          statusDisplay: tx.statut_display,
+          motif: tx.motif,
+          date: tx.create_date,
+          reference: `TX-${tx.id.toString().padStart(6, '0')}`,
+          justificatif: tx.justificatif
+        }
+      })
+
+      set({ 
+        transactions: formattedTransactions,
+        loading: false 
+      })
+
+    } catch (error) {
+      console.error('Error loading transactions:', error)
+      
+      let errorMessage = 'Erreur lors du chargement des transactions'
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || error.message
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
+      
+
+      set({ 
+        error: errorMessage,
+        loading: false 
+      })
+    }
+  }
+
 }));
 
 export default useFeaturesStore;

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,6 +12,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import useFeaturesStore from "@/stores/features"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 export default function InvestmentForm() {
   const router = useRouter()
@@ -19,6 +26,7 @@ export default function InvestmentForm() {
   const [motif, setMotif] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   const investiNow = useFeaturesStore((state) => state.investiNow)
   const project = useFeaturesStore((state) => state.project)
   
@@ -58,27 +66,28 @@ export default function InvestmentForm() {
 
     try {
       if (!amount || !parts || !motif || !project?.id) {
-        setError("Veuillez remplir tous les champs requis")
+        throw new Error("Veuillez remplir tous les champs requis")
       }
 
       if (amount < minInvestment) {
-        setError(`Le montant minimum est de ${formatCurrency(minInvestment)}`)
+        throw new Error(`Le montant minimum est de ${formatCurrency(minInvestment)}`)
       }
 
       if (amount > maxInvestment) {
-        setError(`Le montant maximum est de ${formatCurrency(maxInvestment)}`)
+        throw new Error(`Le montant maximum est de ${formatCurrency(maxInvestment)}`)
       }
 
-      const result = await investiNow({
+      await investiNow({
         montant: amount,
         part: parts,
         projet: project.id,
         motif
       })
 
+      setSuccess(true)
     } catch (error) {
       console.error("Erreur:", error)
-      setError(error instanceof Error ? error?.response?.data.message : "Une erreur inattendue est survenue")
+      setError(error instanceof Error ? error.message : "Une erreur inattendue est survenue")
     } finally {
       setIsSubmitting(false)
     }
@@ -267,6 +276,49 @@ export default function InvestmentForm() {
           </div>
         </div>
       </div>
+
+      {/* Modal de succès */}
+      <Dialog open={success} onOpenChange={setSuccess}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <div className="bg-green-100 p-3 rounded-full">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+            </div>
+            <DialogTitle className="text-center text-2xl">Investissement réussi !</DialogTitle>
+            <DialogDescription className="text-center">
+              Votre investissement de {formatCurrency(amount)} a été enregistré avec succès.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <h3 className="font-semibold">Détails de l'investissement</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="text-muted-foreground">Projet:</div>
+                <div>{project.title}</div>
+                <div className="text-muted-foreground">Nombre de parts:</div>
+                <div>{parts}</div>
+                <div className="text-muted-foreground">Rendement estimé:</div>
+                <div>{formatCurrency(estimatedReturn)}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={() => {
+                setSuccess(false)
+                router.push('/dashboard/investments')
+              }}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Voir mes investissements
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

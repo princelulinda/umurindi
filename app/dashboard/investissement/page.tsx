@@ -6,29 +6,48 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
-import { Search, Plus, FileSearch, AlertCircle } from 'lucide-react'
+import { Search, Plus, FileSearch, AlertCircle, ArrowRight } from 'lucide-react'
 import useFeaturesStore from '@/stores/features'
+import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 export default function InvestissementPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('all')
-  const [investments, setInvestments] = useState([])
   const { loadInvestissements, investissements } = useFeaturesStore()
 
   useEffect(() => {
     loadInvestissements()
-    setInvestments(investissements) 
-  }, [])
+  }, [loadInvestissements])
 
-  const filteredInvestments = investments?.filter(investment => {
+  // Formater les données des investissements
+  const formattedInvestments = investissements?.map(investment => ({
+    id: investment.id,
+    name: investment.projet_title,
+    type: 'project',
+    progress: Math.round((investment.total_investi_projet / (investment.total_investi_projet + Number(investment.montant))) * 100),
+    montant: Number(investment.montant),
+    returnRate: investment.interet_estime,
+    startDate: format(new Date(investment.create_date), 'dd MMM yyyy', { locale: fr }),
+    nextPayment: format(new Date(investment.create_date), 'dd MMM yyyy', { locale: fr }),
+    parts: investment.part,
+    motif: investment.motif,
+    slug: investment.slug
+  })) || []
+
+  const filteredInvestments = formattedInvestments.filter(investment => {
     const matchesSearch = investment.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesTab = activeTab === 'all' || investment.type === activeTab
     return matchesSearch && matchesTab
   })
 
-  const totalInvested = investments?.reduce((sum, inv) => sum + inv.amount, 0)
-  const totalReturns = investments?.reduce((sum, inv) => sum + inv.totalReturns, 0)
-  const averageProgress = investments?.reduce((sum, inv) => sum + inv.progress, 0) / investments?.length
+  const totalInvested = formattedInvestments.reduce((sum, inv) => sum + inv.montant, 0)
+  const totalReturns = formattedInvestments.reduce((sum, inv) => sum + (inv.montant * inv.returnRate / 100), 0)
+  const averageProgress = formattedInvestments.length > 0 
+    ? formattedInvestments.reduce((sum, inv) => sum + inv.progress, 0) / formattedInvestments.length
+    : 0
 
   return (
     <div className="flex-1 h-full bg-background">
@@ -39,7 +58,7 @@ export default function InvestissementPage() {
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Mes Investissements</h1>
               <p className="text-muted-foreground mt-2">
-                Suivez la progression de vos investissements et crédits
+                Suivez la progression de vos investissements
               </p>
             </div>
             <Button className="hidden sm:flex" variant="outline">
@@ -49,29 +68,27 @@ export default function InvestissementPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{investments?.length}</div>
+              <div className="text-2xl font-bold text-primary">{formattedInvestments.length}</div>
               <p className="text-sm text-muted-foreground">Investissements actifs</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{totalInvested?.toLocaleString()} BIF</div>
+              <div className="text-2xl font-bold text-primary">
+                {new Intl.NumberFormat('fr-FR').format(totalInvested)} BIF
+              </div>
               <p className="text-sm text-muted-foreground">Total investi</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{totalReturns?.toLocaleString()} BIF</div>
-              <p className="text-sm text-muted-foreground">Retours totaux</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{averageProgress?.toFixed(1)}%</div>
-              <p className="text-sm text-muted-foreground">Progression moyenne</p>
+              <div className="text-2xl font-bold text-primary">
+                {new Intl.NumberFormat('fr-FR').format(totalReturns)} BIF
+              </div>
+              <p className="text-sm text-muted-foreground">Retours estimés</p>
             </CardContent>
           </Card>
         </div>
@@ -88,29 +105,24 @@ export default function InvestissementPage() {
             />
           </div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList>
               <TabsTrigger value="all">Tous</TabsTrigger>
               <TabsTrigger value="project">Projets</TabsTrigger>
-              <TabsTrigger value="credit">Crédits</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {/* Liste des investissements */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredInvestments?.map((investment) => (
+          {filteredInvestments.map((investment) => (
             <Card key={investment.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg">{investment.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      investment.type === 'project' 
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' 
-                        : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                    }`}>
-                      {investment.type === 'project' ? 'Projet' : 'Crédit'}
-                    </span>
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      Projet
+                    </Badge>
                   </div>
                   
                   <div className="space-y-2">
@@ -127,28 +139,37 @@ export default function InvestissementPage() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Montant investi</p>
-                      <p className="font-medium text-primary">{investment.amount.toLocaleString()} BIF</p>
+                      <p className="font-medium text-primary">
+                        {new Intl.NumberFormat('fr-FR').format(investment.montant)} BIF
+                      </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Retour attendu</p>
-                      <p className="font-medium text-primary">{investment.returnRate}%</p>
+                      <p className="text-muted-foreground">Parts acquises</p>
+                      <p className="font-medium">{investment.parts}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Date de début</p>
+                      <p className="text-muted-foreground">Date d'investissement</p>
                       <p className="font-medium">{investment.startDate}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Prochain paiement</p>
-                      <p className="font-medium">{investment.nextPayment}</p>
+                      <p className="text-muted-foreground">Retour estimé</p>
+                      <p className="font-medium">{investment.returnRate}%</p>
                     </div>
+                  </div>
+
+                  <div className="mt-2">
+                    <p className="text-sm text-muted-foreground mb-1">Motif:</p>
+                    <p className="text-sm line-clamp-2">{investment.motif}</p>
                   </div>
 
                   <Button 
                     variant="default" 
-                    className="w-full mt-2 hover:scale-[1.02] transition-transform"
-                    onClick={() => window.location.href = `/dashboard/investissement/${investment.id}`}
+                    className="w-full mt-2 hover:scale-[1.02] transition-transform" 
+                    asChild
                   >
-                    Voir les détails
+                    <Link href={`/projets/${investment.slug}`}>
+                      Voir le projet <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
                   </Button>
                 </div>
               </CardContent>
@@ -156,8 +177,8 @@ export default function InvestissementPage() {
           ))}
         </div>
 
-        {/* Empty State amélioré */}
-        {filteredInvestments?.length === 0 && (
+        {/* Empty State */}
+        {filteredInvestments.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-dashed border-gray-200 dark:border-gray-700">
             {searchQuery || activeTab !== 'all' ? (
               <>
@@ -191,11 +212,13 @@ export default function InvestissementPage() {
                   Aucun investissement enregistré
                 </h3>
                 <p className="text-muted-foreground text-center max-w-md mb-6">
-                  Commencez à suivre vos investissements en ajoutant votre premier projet ou crédit.
+                  Commencez à investir dans des projets pour les voir apparaître ici.
                 </p>
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Ajouter un investissement
+                <Button className="gap-2" asChild>
+                  <Link href="/projets">
+                    <Plus className="h-4 w-4" />
+                    Explorer les projets
+                  </Link>
                 </Button>
               </>
             )}

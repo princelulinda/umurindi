@@ -37,7 +37,7 @@ const menuSections: MenuSection[] = [
     items: [
       { icon: Users, label: 'Investissement', href: '/dashboard/investissement' },
       { icon: ShoppingCart, label: 'Mes Credit', href: '/dashboard/creditRequestList' },
-      { icon: FileText, label: 'Historique', href: '/dashboard/historique', badge: '5' },
+      { icon: FileText, label: 'Transactions', href: '/dashboard/transactionsList', badge: '5' },
     ]
   },
   {
